@@ -10,7 +10,8 @@
 ## 整体架构
 
 方案拆成**两个包**，按**纯逻辑核心**与**UI 绑定层**分离：
- ![image.png](http://10.0.0.1:5244/d/OSS/obsidian-rd-oss/20261002201631%2B20261002201631752.png?sign=IhF3jSFTZ3O1BnztUrGVq0sLtpgF-v0Ts6aEd7lGLUU=:0)
+<img width="1540" height="1514" alt="image" src="https://github.com/user-attachments/assets/1be010e4-dd8e-4359-a9a6-959e1002351f" />
+
 
 - `IImage` ：
    `Avalonia`生态的图片接口，给`Avalonia`中任何接收`IImage`接口的控件API（`Image.Source`等）规范数据结构属性，通过 `SvgSource` 实现它，将 `SvgDocument`（代表`SVG`的数据对下）发了一张"我是图片"的通行证，包装成一种特殊的数据结构。
