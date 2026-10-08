@@ -7,7 +7,7 @@
     <PackageId>ZXUI.Svg.Core</PackageId>
     <Product>ZXUI Svg Core</Product>
     <Title>ZXUI.Svg.Core</Title>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Description>Core SVG parsing and rendering for ZXUI.Svg. Pure .NET library — only dependency is SkiaSharp. Loads SVG files (path / polyline / polygon / line + viewBox), exposes SkiaSharp SKPicture / SKPath, and renders to PNG bytes / files / SKCanvas. Use directly in console / server / Unity apps, or pair with a UI binding (ZXUI.Svg.Avalonia for Avalonia). Target framework: net10.0.</Description>
     <PackageTags>avalonia;svg;icon;zxui;vector;skia;skiarpash;core</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
