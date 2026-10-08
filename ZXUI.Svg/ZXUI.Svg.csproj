@@ -1,14 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <PackageId>ZXUI.Svg</PackageId>
     <Product>ZXUI Svg</Product>
     <Title>ZXUI.Svg</Title>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Description>Lightweight SVG icon support for Avalonia. Three components: SvgSource (IImage), SvgIcon (TemplatedControl with Foreground / Background / StrokeWidth), and the {z:Svg uri} markup extension. Pairs with ZXUI.Svg.Core for parsing + SkiaSharp rendering. Zero external dependencies beyond Avalonia (11+) and ZXUI.Svg.Core. Target framework: net10.0.</Description>
     <PackageTags>avalonia;svg;icon;zxui;vector;controls</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes><![CDATA[
+1.0.1 ——
+- 修复图标显示不全：新增 <path d="..."> 解析支持（依赖 ZXUI.Svg.Core 1.0.1，基于 SkiaSharp SKPath.ParseSvgPathData）。
+  此前以 <path> 为主体的图标（软盘、下载箭头轮廓等）会缺失主体，只剩 polyline / line 部分。
+- 工程补全 TargetFramework / ImplicitUsings，可直接 dotnet pack。
+
 首发版 —— Avalonia 轻量矢量图标库，基于 Avalonia.Media.StreamGeometry + System.Xml.Linq 自实现。
 
 提供三件套：
@@ -16,7 +24,7 @@
 - SvgIcon : TemplatedControl —— 真实控件，进 Content 区，叠加 Foreground / Background / StrokeWidth 视觉覆盖
 - {z:Svg uri} 标记扩展 —— XAML 简写
 
-支持 SVG 子集：polyline / polygon / line + viewBox + stroke 属性。ZXUI 设计标准：尺寸 mini 12 / small 16 / regular 20 / large 24，描边 light 1 / regular 2 / bold 3。
+支持 SVG 子集：path / polyline / polygon / line + viewBox + stroke 属性。ZXUI 设计标准：尺寸 mini 12 / small 16 / regular 20 / large 24，描边 light 1 / regular 2 / bold 3。
     ]]></PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>

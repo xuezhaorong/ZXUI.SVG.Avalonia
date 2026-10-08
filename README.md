@@ -70,6 +70,18 @@ dotnet add package ZXUI.Svg
         Background="{z:Svg /Assets/Icons/chevron-down.svg}" />
 ```
 
+## 支持的 SVG 子集
+
+| 元素 | 支持情况 |
+|---|---|
+| `<path d="...">` | ✅ 1.0.1 起，path mini-language（M/L/H/V/C/S/Q/T/A/Z）由 `SKPath.ParseSvgPathData` 原生解析 |
+| `<polyline>` / `<polygon>` | ✅ points 解析为 SKPath |
+| `<line>` | ✅ x1/y1/x2/y2 |
+| `viewBox` / `width` / `height` | ✅ 坐标系映射，缺 viewBox 时回退宽高属性 |
+| `stroke="currentColor"` | ✅ 颜色由 `SvgIcon.Foreground` 驱动，支持运行时换色 |
+
+> 注意：描边宽度在渲染时统一取 `SvgIcon.StrokeWidth`（默认 2），并随 viewBox 到控件尺寸等比缩放；图标建议按 24×24 viewBox、stroke-width 2 绘制（Feather Icons 风格可直接使用）。
+
 ## UI绑定层移植
 
 引入纯 `.NET` 核心（不引 `Avalonia`）：

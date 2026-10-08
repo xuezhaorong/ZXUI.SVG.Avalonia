@@ -56,7 +56,13 @@ internal static class SvgParser
                     break;
 
                 case "path":
-                    // 暂不解析 path d="..." 完整 mini-language（按需后续加）
+                    // path mini-language（M/L/H/V/C/S/Q/T/A/Z）交给 SkiaSharp 原生解析
+                    var d = el.Attribute("d")?.Value;
+                    if (!string.IsNullOrWhiteSpace(d))
+                    {
+                        var pathData = SKPath.ParseSvgPathData(d);
+                        if (pathData is not null) paths.Add(pathData);
+                    }
                     break;
             }
         }
