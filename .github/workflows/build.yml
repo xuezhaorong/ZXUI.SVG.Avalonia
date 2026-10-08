@@ -1,0 +1,43 @@
+name: Release
+
+# 打标签触发：git tag v1.0.1 && git push origin v1.0.1
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Trusted Publishing 必须开启 OIDC（id-token: write），无需任何 API Key
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Pack
+        run: |
+          dotnet pack ZXUI.Svg.Core/ZXUI.Svg.Core.csproj -c Release -o artifacts
+          dotnet pack ZXUI.Svg/ZXUI.Svg.csproj      -c Release -o artifacts
+
+      # 先推 Core（Svg 依赖它）
+      - name: Publish Core
+        run: >
+          dotnet nuget push artifacts/ZXUI.Svg.Core.*.nupkg
+          --source https://api.nuget.org/v3/index.json
+
+      # [0-9] 通配只命中 ZXUI.Svg.1.0.1，不会误匹配 ZXUI.Svg.Core
+      - name: Publish Svg
+        run: >
+          dotnet nuget push artifacts/ZXUI.Svg.[0-9]*.nupkg
+          --source https://api.nuget.org/v3/index.json
