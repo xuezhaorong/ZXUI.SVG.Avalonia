@@ -7,11 +7,14 @@
     <PackageId>ZXUI.Svg</PackageId>
     <Product>ZXUI Svg</Product>
     <Title>ZXUI.Svg</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Description>Lightweight SVG icon support for Avalonia. Three components: SvgSource (IImage), SvgIcon (TemplatedControl with Foreground / Background / StrokeWidth), and the {z:Svg uri} markup extension. Pairs with ZXUI.Svg.Core for parsing + SkiaSharp rendering. Zero external dependencies beyond Avalonia (11+) and ZXUI.Svg.Core. Target framework: net10.0.</Description>
     <PackageTags>avalonia;svg;icon;zxui;vector;controls</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes><![CDATA[
+1.0.2 ——
+- 包内附带 README.md（修复 nuget.org 上的 "Readme missing" 警告，README 路径指向仓库根目录）。
+
 1.0.1 ——
 - 修复图标显示不全：新增 <path d="..."> 解析支持（依赖 ZXUI.Svg.Core 1.0.1，基于 SkiaSharp SKPath.ParseSvgPathData）。
   此前以 <path> 为主体的图标（软盘、下载箭头轮廓等）会缺失主体，只剩 polyline / line 部分。
@@ -27,6 +30,7 @@
 支持 SVG 子集：path / polyline / polygon / line + viewBox + stroke 属性。ZXUI 设计标准：尺寸 mini 12 / small 16 / regular 20 / large 24，描边 light 1 / regular 2 / bold 3。
     ]]></PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,8 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="README.md" />
-    <None Include="$(MSBuildThisFileDirectory)/LICENSE" Pack="true" PackagePath="LICENSE" />
+    <None Include="$(MSBuildThisFileDirectory)/../README.md" Pack="true" PackagePath="README.md" />
+    <None Include="$(MSBuildThisFileDirectory)/../LICENSE" Pack="true" PackagePath="LICENSE" />
   </ItemGroup>
 
 </Project>
