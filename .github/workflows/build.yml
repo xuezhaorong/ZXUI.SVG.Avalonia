@@ -12,9 +12,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # Trusted Publishing 必须开启 OIDC（id-token: write），无需任何 API Key
     permissions:
-      id-token: write
+      id-token: write   # 启用 GitHub OIDC 令牌颁发
       contents: read
 
     steps:
@@ -25,26 +24,28 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Diagnose OIDC environment
-        run: |
-          dotnet --version
-          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "OIDC_URL: present"; else echo "OIDC_URL: MISSING"; fi
-          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then echo "OIDC_TOKEN: present (${#ACTIONS_ID_TOKEN_REQUEST_TOKEN} chars)"; else echo "OIDC_TOKEN: MISSING"; fi
-          echo "GITHUB_ACTIONS=$GITHUB_ACTIONS"
-
       - name: Pack
         run: |
           dotnet pack ZXUI.Svg.Core/ZXUI.Svg.Core.csproj -c Release -o artifacts
           dotnet pack ZXUI.Svg/ZXUI.Svg.csproj      -c Release -o artifacts
 
+      # OIDC → 临时 API Key（官方推荐写法）
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: XueZhaorong   # nuget.org 用户名（profile name）
+
       # 先推 Core（Svg 依赖它）
       - name: Publish Core
         run: >
           dotnet nuget push artifacts/ZXUI.Svg.Core.*.nupkg
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
           --source https://api.nuget.org/v3/index.json
 
       # [0-9] 通配只命中 ZXUI.Svg.1.0.1，不会误匹配 ZXUI.Svg.Core
       - name: Publish Svg
         run: >
           dotnet nuget push artifacts/ZXUI.Svg.[0-9]*.nupkg
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
           --source https://api.nuget.org/v3/index.json
