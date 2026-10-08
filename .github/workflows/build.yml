@@ -41,6 +41,7 @@ jobs:
           dotnet nuget push artifacts/ZXUI.Svg.Core.*.nupkg
           --api-key ${{ steps.loginCore.outputs.NUGET_API_KEY }}
           --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
 
       - name: NuGet login (Svg)
         uses: NuGet/login@v1
@@ -54,3 +55,4 @@ jobs:
           dotnet nuget push artifacts/ZXUI.Svg.[0-9]*.nupkg
           --api-key ${{ steps.loginSvg.outputs.NUGET_API_KEY }}
           --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
