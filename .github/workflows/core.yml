@@ -1,0 +1,42 @@
+name: Publish ZXUI.Svg.Core
+
+# 触发：core-v1.0.1 / git push origin core-v1.0.1
+on:
+  push:
+    tags:
+      - 'core-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Pack Core
+        run: dotnet pack ZXUI.Svg.Core/ZXUI.Svg.Core.csproj -c Release -o artifacts
+
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: XueZhaorong
+
+      - name: Publish Core
+        run: >
+          dotnet nuget push artifacts/ZXUI.Svg.Core.*.nupkg
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
