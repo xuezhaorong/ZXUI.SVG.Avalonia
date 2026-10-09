@@ -5,7 +5,8 @@ using SkiaSharp;
 namespace ZXUI.Svg.Core;
 
 /// <summary>
-/// SVG 解析结果 —— 把 <c>polyline</c> / <c>polygon</c> / <c>line</c> 转成 <see cref="SKPath"/> 列表，
+/// SVG 解析结果 —— 把 <c>polyline</c> / <c>polygon</c> / <c>line</c> / <c>path</c> /
+/// <c>circle</c> / <c>ellipse</c> / <c>rect</c> 转成 <see cref="SKPath"/> 列表，
 /// 同时记下 viewBox 用于坐标系映射。
 /// </summary>
 internal sealed record SvgGeometry(
@@ -63,6 +64,21 @@ internal static class SvgParser
                         var pathData = SKPath.ParseSvgPathData(d);
                         if (pathData is not null) paths.Add(pathData);
                     }
+                    break;
+
+                case "circle":
+                    if (TryParseCircle(el, out var circlePath))
+                        paths.Add(circlePath);
+                    break;
+
+                case "ellipse":
+                    if (TryParseEllipse(el, out var ellipsePath))
+                        paths.Add(ellipsePath);
+                    break;
+
+                case "rect":
+                    if (TryParseRect(el, out var rectPath))
+                        paths.Add(rectPath);
                     break;
             }
         }
@@ -148,5 +164,86 @@ internal static class SvgParser
             p.LineTo((float)points[i].X, (float)points[i].Y);
         if (closed) p.LineTo((float)points[0].X, (float)points[0].Y);
         return p;
+    }
+
+    /// <summary>
+    /// 解析 <c>&lt;circle cx cy r&gt;</c>。cx/cy 缺省视为 0；r 必须为正数（否则视为无效，跳过）。
+    /// </summary>
+    private static bool TryParseCircle(XElement el, out SKPath path)
+    {
+        path = null!;
+        if (!double.TryParse(el.Attribute("r")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var r)
+            || r <= 0)
+        {
+            return false;
+        }
+
+        double.TryParse(el.Attribute("cx")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cx);
+        double.TryParse(el.Attribute("cy")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cy);
+
+        path = new SKPath();
+        path.AddCircle((float)cx, (float)cy, (float)r, SKPathDirection.Clockwise);
+        return true;
+    }
+
+    /// <summary>
+    /// 解析 <c>&lt;ellipse cx cy rx ry&gt;</c>。cx/cy 缺省视为 0；rx/ry 必须为正数（否则视为无效，跳过）。
+    /// </summary>
+    private static bool TryParseEllipse(XElement el, out SKPath path)
+    {
+        path = null!;
+        if (!double.TryParse(el.Attribute("rx")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var rx)
+            || !double.TryParse(el.Attribute("ry")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ry)
+            || rx <= 0 || ry <= 0)
+        {
+            return false;
+        }
+
+        double.TryParse(el.Attribute("cx")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cx);
+        double.TryParse(el.Attribute("cy")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var cy);
+
+        path = new SKPath();
+        path.AddOval(
+            new SKRect((float)(cx - rx), (float)(cy - ry), (float)(cx + rx), (float)(cy + ry)),
+            SKPathDirection.Clockwise);
+        return true;
+    }
+
+    /// <summary>
+    /// 解析 <c>&lt;rect x y width height rx ry&gt;</c>。x/y 缺省视为 0；
+    /// width/height 必须为正数；rx/ry 缺省视为 0；
+    /// SVG 规范：rx/ry 只写一个时，另一个取其值；
+    /// rx/ry 超过对应边一半时钳到一半；负值视作 0。
+    /// </summary>
+    private static bool TryParseRect(XElement el, out SKPath path)
+    {
+        path = null!;
+        if (!double.TryParse(el.Attribute("width")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var w)
+            || !double.TryParse(el.Attribute("height")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var h)
+            || w <= 0 || h <= 0)
+        {
+            return false;
+        }
+
+        double.TryParse(el.Attribute("x")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var x);
+        double.TryParse(el.Attribute("y")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var y);
+
+        double rx = 0, ry = 0;
+        var hasRx = double.TryParse(el.Attribute("rx")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out rx);
+        var hasRy = double.TryParse(el.Attribute("ry")?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out ry);
+        if (hasRx && !hasRy) ry = rx;
+        else if (hasRy && !hasRx) rx = ry;
+        if (rx < 0) rx = 0;
+        if (ry < 0) ry = 0;
+        rx = Math.Min(rx, w / 2);
+        ry = Math.Min(ry, h / 2);
+
+        var rect = new SKRect((float)x, (float)y, (float)(x + w), (float)(y + h));
+        path = new SKPath();
+        if (rx > 0 || ry > 0)
+            path.AddRoundRect(rect, (float)rx, (float)ry, SKPathDirection.Clockwise);
+        else
+            path.AddRect(rect, SKPathDirection.Clockwise);
+        return true;
     }
 }

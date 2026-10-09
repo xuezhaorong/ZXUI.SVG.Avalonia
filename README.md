@@ -77,6 +77,9 @@ dotnet add package ZXUI.Svg
 | `<path d="...">` | ✅ 1.0.1 起，path mini-language（M/L/H/V/C/S/Q/T/A/Z）由 `SKPath.ParseSvgPathData` 原生解析 |
 | `<polyline>` / `<polygon>` | ✅ points 解析为 SKPath |
 | `<line>` | ✅ x1/y1/x2/y2 |
+| `<circle>` | ✅ 1.0.4 起，`SKPath.AddCircle`；缺省 cx/cy=0，r 必须为正 |
+| `<ellipse>` | ✅ 1.0.4 起，`SKPath.AddOval`；缺省 cx/cy=0，rx/ry 必须为正 |
+| `<rect>` | ✅ 1.0.4 起，`SKPath.AddRect` / `AddRoundRect`；x/y 缺省 0；rx/ry 可只写一个、互相继承；超过 width/2 时自动钳到一半 |
 | `viewBox` / `width` / `height` | ✅ 坐标系映射，缺 viewBox 时回退宽高属性 |
 | `stroke="currentColor"` | ✅ 颜色由 `SvgIcon.Foreground` 驱动，支持运行时换色 |
 

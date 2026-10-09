@@ -7,11 +7,16 @@
     <PackageId>ZXUI.Svg</PackageId>
     <Product>ZXUI Svg</Product>
     <Title>ZXUI.Svg</Title>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Description>Lightweight SVG icon support for Avalonia. Three components: SvgSource (IImage), SvgIcon (TemplatedControl with Foreground / Background / StrokeWidth), and the {z:Svg uri} markup extension. Pairs with ZXUI.Svg.Core for parsing + SkiaSharp rendering. Zero external dependencies beyond Avalonia (11+) and ZXUI.Svg.Core. Target framework: net10.0.</Description>
     <PackageTags>avalonia;svg;icon;zxui;vector;controls</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes><![CDATA[
+1.0.4 ——
+- 新增 <circle> / <ellipse> / <rect> 图标支持（依赖 ZXUI.Svg.Core 1.0.4，基于 SKPath.AddCircle / AddOval / AddRect / AddRoundRect）。
+  修复此前以 <circle> 为主体的图标（feather info-circle / warning-circle / x-circle 等）只显示内部符号、不显示圆环的问题。
+- <rect> 支持 rx/ry 圆角，符合 SVG 规范。
+
 1.0.2 ——
 - 包内附带 README.md（修复 nuget.org 上的 "Readme missing" 警告，README 路径指向仓库根目录）。
 
@@ -27,7 +32,7 @@
 - SvgIcon : TemplatedControl —— 真实控件，进 Content 区，叠加 Foreground / Background / StrokeWidth 视觉覆盖
 - {z:Svg uri} 标记扩展 —— XAML 简写
 
-支持 SVG 子集：path / polyline / polygon / line + viewBox + stroke 属性。ZXUI 设计标准：尺寸 mini 12 / small 16 / regular 20 / large 24，描边 light 1 / regular 2 / bold 3。
+支持 SVG 子集：path / polyline / polygon / line / circle / ellipse / rect + viewBox + stroke 属性。ZXUI 设计标准：尺寸 mini 12 / small 16 / regular 20 / large 24，描边 light 1 / regular 2 / bold 3。
     ]]></PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>

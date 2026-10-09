@@ -149,10 +149,11 @@ doc.DrawToCanvas(canvas, width: 128, height: 128, background: null, paint: paint
 
 | 支持 | 暂不支持（按需扩展） |
 |---|---|
-| `<polyline>` / `<polygon>` / `<line>` | `<path d="...">` 完整 mini-language |
-| `viewBox` | `<circle>` / `<ellipse>` / `<rect>` |
-| `stroke` / `stroke-width` | `<g>` / `transform` / `<defs>` / `<use>` |
-| | 渐变 / 滤镜 / 遮罩 / 动画 / `<text>` |
+| `<polyline>` / `<polygon>` / `<line>` | `<g>` / `transform` / `<defs>` / `<use>` |
+| `<path d="...">`（1.0.1 起，path mini-language） | 渐变 / 滤镜 / 遮罩 / 动画 / `<text>` |
+| `<circle>` / `<ellipse>` / `<rect>`（1.0.4 起；rect 支持 rx/ry 圆角） | |
+| `viewBox` | |
+| `stroke` / `stroke-width` | |
 
 针对 Feather / Lucide 一类线条图标设计。几何体只在首次访问时解析一次并缓存。
 
